@@ -1,0 +1,54 @@
+.log-table-container {
+  width: 100%;
+  margin-top: 20px;
+  /* overflow-x: auto; */
+}
+.log-table-container table tr[role="button"]:focus {
+  outline: 2px solid blue;
+}
+
+.log-table {
+  /* overflow-x: scroll; */
+  white-space: nowrap;
+  font-weight: bold;
+  color: #595959;
+}
+
+.log-table-container {
+  width: 100%;
+}
+
+.log-table {
+  width: 100%;
+  table-layout: fixed; /* Ensures that the columns adjust based on content */
+  border-collapse: collapse;
+}
+
+.log-table tr {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.log-table th,
+.log-table td {
+  text-align: left;
+  padding-left: 20px;
+  font-size: 12px;
+}
+
+.title-row {
+  font-size: 12px;
+  display: flex;
+  border-bottom: 1px solid black;
+  border-top: 1px solid black;
+}
+.title-row div:nth-child(1) {
+  width: 190px;
+  padding-left: 15px;
+}
+.title-row div:nth-child(2) {
+  width: auto; /* Let the Event column take the remaining space */
+  word-break: break-all; /* Ensures long words in the Event column wrap */
+  border-left: 1px solid black;
+  padding-left: 15px;
+}

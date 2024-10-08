@@ -1,0 +1,58 @@
+.log-entry {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+.log-entry:hover {
+  background: #ddd !important;
+  cursor: pointer;
+}
+
+.log-summary {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.log-entry.odd {
+  background-color: #f2f2f2; /* Light gray for odd rows */
+}
+
+.log-entry.even {
+  background-color: #ffffff; /* White for even rows */
+}
+
+.log-summary-left {
+  display: flex;
+  align-items: center;
+}
+
+.log-summary-right {
+  display: flex;
+  gap: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.arrow {
+  display: inline-block;
+  margin-right: 10px;
+  transition: transform 0.3s ease;
+}
+
+.arrow.expanded {
+  transform: rotate(90deg); /* Rotate the arrow when expanded */
+}
+
+.log-detail {
+  background-color: #f8f8f8;
+  color: #c00;
+  padding: 10px;
+  border-left: 5px solid #007bff;
+  margin-top: 10px;
+  white-space: nowrap; /* Keep the log data in a single line */
+  font-family: "Courier New", Courier, monospace;
+}
