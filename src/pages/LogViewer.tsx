@@ -1,12 +1,11 @@
-import React, { useContext } from "react";
+import React from "react";
 import Header from "../components/Header/Header";
 import Timeline from "../components/Timeline/Timeline";
 import LogTable from "../components/LogTable/LogTable";
-import { LogContext, LogContextType } from "../context/LogContext"; // Import LogContext with correct types
+import { useLogs } from "../context/LogContext"; // Import LogContext with correct types
 
 const LogViewer: React.FC = () => {
-  // Now TypeScript knows that `useContext(LogContext)` returns LogContextType
-  const { error } = useContext(LogContext) as LogContextType;
+  const { error } = useLogs();
 
   return (
     <div className="log-viewer">

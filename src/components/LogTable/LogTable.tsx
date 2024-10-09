@@ -1,8 +1,8 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
 import { VariableSizeList as List } from "react-window";
-import ResizeObserver from "resize-observer-polyfill";
 import LogEntry from "../LogEntry/LogEntry";
 import { LogContext, LogContextType } from "../../context/LogContext";
+import { useResizeObserver } from "../../hooks/useResizeObserver";
 import "./LogTable.css";
 
 const LogTable: React.FC = () => {
@@ -11,7 +11,10 @@ const LogTable: React.FC = () => {
   const listRef = useRef<List>(null);
   const rowHeights = useRef<{ [index: number]: number }>({});
   const containerRef = useRef<HTMLDivElement>(null);
-  const [listWidth, setListWidth] = useState<number>(0);
+  const [listHeight, setListHeight] = useState<number>(0);
+
+  // Use the custom useResizeObserver hook to get the container width
+  const listWidth = useResizeObserver(containerRef);
 
   const toggleRow = (index: number) => {
     setExpandedRows((prev) => {
@@ -20,7 +23,6 @@ const LogTable: React.FC = () => {
         [index]: !prev[index]
       };
 
-      // Recalculate the size of the item when expanded/collapsed
       if (listRef.current) {
         listRef.current.resetAfterIndex(index);
       }
@@ -43,22 +45,16 @@ const LogTable: React.FC = () => {
     }
   };
 
+  // Set the height based on 100vh
   useEffect(() => {
-    const observer = new ResizeObserver((entries) => {
-      for (let entry of entries) {
-        setListWidth(entry.contentRect.width);
-      }
-    });
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => {
-      if (containerRef.current) {
-        observer.unobserve(containerRef.current);
-      }
+    const updateHeight = () => {
+      setListHeight(window.innerHeight * 0.98); // or use window.innerHeight directly for 100vh equivalent
     };
+
+    updateHeight(); // Set initial height
+    window.addEventListener("resize", updateHeight);
+
+    return () => window.removeEventListener("resize", updateHeight);
   }, []);
 
   const Row = ({
@@ -123,10 +119,10 @@ const LogTable: React.FC = () => {
         <div role="rowgroup">
           <List
             ref={listRef}
-            height={window.innerHeight} // Adjustable to 70% of the viewport height
+            height={listHeight} // Use the dynamic listHeight based on 100vh
             itemCount={logs.length}
             itemSize={getItemSize} // Function to calculate the size dynamically
-            width={listWidth} // Use the observed container width
+            width={listWidth} // Use the width returned by useResizeObserver
           >
             {Row}
           </List>
