@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useLogs } from "../../context/LogContext";
 import Tooltip from "../Tooltip/Tooltip";
 import { formatTime, formatDate, getDayStart } from "../../utils/dateUtils"; // Import utilities
+import TimelineControls from "./TimelineControls"; // Import the modularized controls
 import "./Timeline.css";
 
 interface TimelineProps {
@@ -92,27 +93,14 @@ const Timeline: React.FC<TimelineProps> = ({ color = "#8884d8" }) => {
 
   return (
     <figure>
-      <div className="controls">
-        <button
-          onClick={handlePreviousDay}
-          disabled={!isPrevDayAvailable}
-          aria-label="Previous Day"
-        >
-          Previous Day
-        </button>
-        <button
-          onClick={handleNextDay}
-          disabled={!isNextDayAvailable}
-          aria-label="Next Day"
-        >
-          Next Day
-        </button>
-        {currentDay && (
-          <div className="current-day" aria-live="polite">
-            <strong>Current Day:</strong> {formatDate(currentDay)}
-          </div>
-        )}
-      </div>
+      <TimelineControls
+        currentDay={currentDay}
+        isPrevDayAvailable={isPrevDayAvailable}
+        isNextDayAvailable={isNextDayAvailable}
+        formatDate={formatDate}
+        handlePreviousDay={handlePreviousDay}
+        handleNextDay={handleNextDay}
+      />
 
       <div className="time-period">
         <strong>Time Period:</strong> {firstLogTime} to {lastLogTime}
