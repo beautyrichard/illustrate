@@ -103,7 +103,7 @@ const Timeline: React.FC<TimelineProps> = ({ color = "#8884d8" }) => {
       />
 
       <div className="time-period">
-        <strong>Time Period:</strong> {firstLogTime} to {lastLogTime}
+        <strong>Time Period:</strong> {lastLogTime} to {firstLogTime}
       </div>
 
       <div className="chart-container" ref={chartContainerRef}>
