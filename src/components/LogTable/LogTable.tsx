@@ -1,8 +1,10 @@
-import React, { useContext, useState, useRef, useEffect } from "react";
+import React, { useContext, useState, useRef } from "react";
 import { VariableSizeList as List } from "react-window";
-import LogEntry from "../LogEntry/LogEntry";
+import LogTableRow from "./LogTableRow";
+import LogTableTitleRow from "./LogTableTitleRow";
 import { LogContext, LogContextType } from "../../context/LogContext";
 import { useResizeObserver } from "../../hooks/useResizeObserver";
+import { useListHeight } from "../../hooks/useListHeight"; // Custom hook to calculate height
 import "./LogTable.css";
 
 const LogTable: React.FC = () => {
@@ -11,10 +13,8 @@ const LogTable: React.FC = () => {
   const listRef = useRef<List>(null);
   const rowHeights = useRef<{ [index: number]: number }>({});
   const containerRef = useRef<HTMLDivElement>(null);
-  const [listHeight, setListHeight] = useState<number>(0);
-
-  // Use the custom useResizeObserver hook to get the container width
-  const listWidth = useResizeObserver(containerRef);
+  const listHeight = useListHeight(); // Use the custom hook to get list height
+  const listWidth = useResizeObserver(containerRef); // Use the custom hook for width
 
   const toggleRow = (index: number) => {
     setExpandedRows((prev) => {
@@ -45,77 +45,10 @@ const LogTable: React.FC = () => {
     }
   };
 
-  // Set the height based on 100vh
-  useEffect(() => {
-    const updateHeight = () => {
-      setListHeight(window.innerHeight * 0.98); // or use window.innerHeight directly for 100vh equivalent
-    };
-
-    updateHeight(); // Set initial height
-    window.addEventListener("resize", updateHeight);
-
-    return () => window.removeEventListener("resize", updateHeight);
-  }, []);
-
-  const Row = ({
-    index,
-    style
-  }: {
-    index: number;
-    style: React.CSSProperties;
-  }) => {
-    const log = logs[index];
-    const rowRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-      const observer = new ResizeObserver((entries) => {
-        for (let entry of entries) {
-          setRowHeight(index, entry.contentRect.height);
-        }
-      });
-
-      if (rowRef.current) {
-        observer.observe(rowRef.current);
-      }
-
-      return () => {
-        if (rowRef.current) {
-          observer.unobserve(rowRef.current);
-        }
-      };
-    }, []);
-
-    const isEven = index % 2 === 0;
-
-    return (
-      <div style={style}>
-        <div ref={rowRef}>
-          <LogEntry
-            key={index}
-            log={log}
-            isExpanded={!!expandedRows[index]}
-            onToggle={() => toggleRow(index)}
-            isEven={isEven}
-          />
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="log-table-container" ref={containerRef}>
       <div className="log-table" role="table" aria-label="Log Entries Table">
-        <div role="rowgroup">
-          <div className="title-row" role="row">
-            <div role="columnheader" aria-sort="none">
-              Time
-            </div>
-            <div role="columnheader" aria-sort="none">
-              Event
-            </div>
-          </div>
-        </div>
-
+        <LogTableTitleRow /> {/* Title Row extracted as its own component */}
         <div role="rowgroup">
           <List
             ref={listRef}
@@ -124,7 +57,16 @@ const LogTable: React.FC = () => {
             itemSize={getItemSize} // Function to calculate the size dynamically
             width={listWidth} // Use the width returned by useResizeObserver
           >
-            {Row}
+            {({ index, style }) => (
+              <LogTableRow
+                index={index}
+                log={logs[index]}
+                style={style}
+                isExpanded={!!expandedRows[index]}
+                onToggle={() => toggleRow(index)}
+                setRowHeight={setRowHeight}
+              />
+            )}
           </List>
         </div>
       </div>
